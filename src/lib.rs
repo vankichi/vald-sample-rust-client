@@ -1,4 +1,4 @@
 // TODO: fix the error below code
-// pub mod api {
-//   todo!("fix the failed error");
-// }
+pub mod vald {
+    tonic::include_proto!("vald.v1");
+}
