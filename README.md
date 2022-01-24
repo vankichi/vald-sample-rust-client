@@ -14,6 +14,8 @@ $ make init
 
 ### Run
 
+The below commands requires the Vald cluster.
+
 ```bash
-$ make cargo run
+$ make run
 ```
