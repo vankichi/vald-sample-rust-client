@@ -19,7 +19,7 @@ static DATASET: &str = "train";
 // set Vald cluster host
 static HOST: &str = "http://localhost:8080";
 // Time duration for waiting to finish `CreateIndex` and `SaveIndex`
-static DURATION: u64 = 15;
+static DURATION: u64 = 60;
 
 fn read_file() -> Result<Vec<Vec<f32>>> {
     let file = File::open(FILE).unwrap_or_else(|e| panic!("[ERR] failed to read file: {}", e));
