@@ -1,12 +1,12 @@
 // build proto files
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     tonic_build::configure()
-        .build_server(true)
         .build_client(true)
         .compile(
             &[
                 "proto/vald/insert.proto",
                 "proto/vald/update.proto",
+                "proto/vald/search.proto",
                 "proto/vald/filter.proto",
                 "proto/vald/object.proto",
                 "proto/vald/remove.proto",
