@@ -18,4 +18,4 @@ Cargo.lock
 #Cargo.lock
 
 **/*.hdf5
-proto
+/proto/
