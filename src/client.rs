@@ -97,6 +97,31 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
     print!("[End] Finish Search Phase\n");
 
+    print!("[Start] Linear Search phase\n");
+    // create linear search client
+    let mut linear_search_client =
+        search_client::SearchClient::connect(Endpoint::from_static(HOST)).await?;
+    for id in ids.clone() {
+        // search nearest neighbor vectors using searchById method
+        let res = linear_search_client
+            .linear_search_by_id(search::IdRequest {
+                id: id.to_string(),
+                config: Some(search::Config {
+                    request_id: id.to_string(),
+                    num: 10,
+                    radius: -1.0,
+                    epsilon: -1.0, // no use parameter but should be set for compile success
+                    timeout: 500,
+                    ingress_filters: None,
+                    egress_filters: None,
+                }),
+            })
+            .await?;
+        print!("[Id]: {:?}\n", id.to_string());
+        print!("[Result]: {:#?}\n", res.into_inner().results);
+    }
+    print!("[End] Finish Search Phase\n");
+
     print!("[Start] Remove phase\n");
     // create remove client
     let mut remove_client =
