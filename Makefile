@@ -12,6 +12,8 @@ fix/import/path:
 .PHONY: sync/proto/vald
 sync/proto/vald:
 	@git clone https://github.com/vdaas/vald
+	@rm -rf proto/vald
+	@rm -rf proto/payload
 	@cp -R vald/apis/proto/v1/vald proto/vald
 	@cp -R vald/apis/proto/v1/payload proto/payload
 	@rm -rf vald
@@ -38,6 +40,16 @@ init:
 	@$(call fix/import/path)
 	@cargo build
 	@wget http://ann-benchmarks.com/fashion-mnist-784-euclidean.hdf5
+
+.PHONY: update
+update:
+	@rustup update stable
+	@mkdir -p proto
+	@$(call sync/proto/vald)
+	@$(call sync/proto/googleapis)
+	@$(call sync/proto/protoc-gen-validate)
+	@$(call fix/import/path)
+	@cargo build
 
 .PHONY: run
 run:
