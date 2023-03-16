@@ -14,7 +14,13 @@ This example uses [fashion-mnist-784-euclidean](http://ann-benchmarks.com/fashio
 $ make init
 ```
 
-### Run
+### Update
+
+```bash
+$ make update
+```
+
+### Run example code
 
 The below commands requires the Vald cluster.
 
