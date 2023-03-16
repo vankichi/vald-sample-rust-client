@@ -1,6 +1,12 @@
 PROTO_DIR = "./proto"
+VALD = "vald"
+PAYLOAD = "payload"
+VALD_URL = "https://github.com/vdaas/${VALD}"
 GOOGLE_API = "googleapis"
-GOOGLE_API_URL = "https://github.com/googleapis/googleapis"
+GOOGLE_PROTO = "google"
+GOOGLE_API_URL = "https://github.com/googleapis/${GOOGLE_API}"
+PROTOC_GEN_VALIDATE = "protoc-gen-validate"
+PROTOC_GEN_VALIDATE_URL = "https://github.com/envoyproxy/${PROTOC_GEN_VALIDATE}"
 
 .PHONY: fix/import/path
 fix/import/path:
@@ -11,33 +17,33 @@ fix/import/path:
 
 .PHONY: sync/proto/vald
 sync/proto/vald:
-	@git clone https://github.com/vdaas/vald
-	@rm -rf proto/vald
-	@rm -rf proto/payload
-	@cp -R vald/apis/proto/v1/vald proto/vald
-	@cp -R vald/apis/proto/v1/payload proto/payload
-	@rm -rf vald
+	@git clone ${VALD_URL}
+	@rm -rf ${PROTO_DIR}/${VALD} ${PROTO_DIR}/${PAYLOAD}
+	@cp -R ${VALD}/apis/proto/v1/vald ${PROTO_DIR}/${VALD}
+	@cp -R ${VALD}/apis/proto/v1/payload ${PROTO_DIR}/${PAYLOAD}
+	@rm -rf ${VALD}
 
 .PHONY: sync/proto/googleapis
 sync/proto/googleapis:
-	@rm -rf ${PROTO_DIR}/${GOOGLE_API}
+	@rm -rf ${PROTO_DIR}/${GOOGLE_PROTO}
 	@git clone ${GOOGLE_API_URL}
-	@cp -R ${GOOGLE_API}/google proto/${GOOGLE_API}
+	@cp -R ${GOOGLE_API}/${GOOGLE_PROTO} ${PROTO_DIR}/${GOOGLE_PROTO}
 	@rm -rf ${GOOGLE_API}
 
 .PHONY: sync/proto/protoc-gen-validate
 sync/proto/protoc-gen-validate:
-	@git clone https://github.com/envoyproxy/protoc-gen-validate
-	@mv protoc-gen-validate proto/protoc-gen-validate
+	@rm -rf ${PROTO_DIR}/${PROTOC_GEN_VALIDATE}
+	@git clone ${PROTOC_GEN_VALIDATE_URL}
+	@mv ${PROTOC_GEN_VALIDATE} ${PROTO_DIR}/${PROTOC_GEN_VALIDATE}
 
 .PHONY: init
 init:
 	@rustup update stable
 	@mkdir -p proto
-	@$(call sync/proto/vald)
-	@$(call sync/proto/googleapis)
-	@$(call sync/proto/protoc-gen-validate)
-	@$(call fix/import/path)
+	@$(MAKE) sync/proto/vald
+	@$(MAKE) sync/proto/googleapis
+	@$(MAKE) sync/proto/protoc-gen-validate
+	@$(MAKE) fix/import/path
 	@cargo build
 	@wget http://ann-benchmarks.com/fashion-mnist-784-euclidean.hdf5
 
@@ -45,10 +51,10 @@ init:
 update:
 	@rustup update stable
 	@mkdir -p proto
-	@$(call sync/proto/vald)
-	@$(call sync/proto/googleapis)
-	@$(call sync/proto/protoc-gen-validate)
-	@$(call fix/import/path)
+	@$(MAKE) sync/proto/vald
+	@$(MAKE) sync/proto/googleapis
+	@$(MAKE) sync/proto/protoc-gen-validate
+	@$(MAKE) fix/import/path
 	@cargo build
 
 .PHONY: run
