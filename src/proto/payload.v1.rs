@@ -81,6 +81,9 @@ pub mod search {
         /// Egress filter configurations.
         #[prost(message, optional, tag = "7")]
         pub egress_filters: ::core::option::Option<super::filter::Config>,
+        /// Minimum number of result to be returned.
+        #[prost(uint32, tag = "8")]
+        pub min_num: u32,
     }
     /// Represent a search response.
     #[derive(Clone, PartialEq, ::prost::Message)]
@@ -251,6 +254,9 @@ pub mod update {
         /// Update timestamp.
         #[prost(int64, tag = "3")]
         pub timestamp: i64,
+        /// A flag to disable balanced update (split remove -> insert operation) during update operation.
+        #[prost(bool, tag = "4")]
+        pub disable_balanced_update: bool,
     }
 }
 /// Upsert related messages.
@@ -307,6 +313,9 @@ pub mod upsert {
         /// Upsert timestamp.
         #[prost(int64, tag = "3")]
         pub timestamp: i64,
+        /// A flag to disable balanced update (split remove -> insert operation) during update operation.
+        #[prost(bool, tag = "4")]
+        pub disable_balanced_update: bool,
     }
 }
 /// Remove related messages.
@@ -350,7 +359,7 @@ pub mod object {
     /// Represent a request to fetch raw vector.
     #[derive(Clone, PartialEq, ::prost::Message)]
     pub struct VectorRequest {
-        /// The vector ID to be fetch.
+        /// The vector ID to be fetched.
         #[prost(message, optional, tag = "1")]
         pub id: ::core::option::Option<Id>,
         /// Filter configurations.
@@ -528,13 +537,13 @@ pub mod discoverer {
     /// Represent the dicoverer request.
     #[derive(Clone, PartialEq, ::prost::Message)]
     pub struct Request {
-        /// The agent name to be discover.
+        /// The agent name to be discovered.
         #[prost(string, tag = "1")]
         pub name: ::prost::alloc::string::String,
-        /// The namespace to be discover.
+        /// The namespace to be discovered.
         #[prost(string, tag = "2")]
         pub namespace: ::prost::alloc::string::String,
-        /// The node to be discover.
+        /// The node to be discovered.
         #[prost(string, tag = "3")]
         pub node: ::prost::alloc::string::String,
     }

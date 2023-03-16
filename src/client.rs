@@ -84,6 +84,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 config: Some(search::Config {
                     request_id: id.to_string(),
                     num: 10,
+                    min_num: 10,
                     radius: -1.0,
                     epsilon: -1.0,
                     timeout: 500,
@@ -109,6 +110,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 config: Some(search::Config {
                     request_id: id.to_string(),
                     num: 10,
+                    min_num: 10,
                     radius: -1.0,
                     epsilon: -1.0, // no use parameter but should be set for compile success
                     timeout: 500,
