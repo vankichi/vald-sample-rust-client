@@ -84,6 +84,9 @@ pub mod search {
         /// Minimum number of result to be returned.
         #[prost(uint32, tag = "8")]
         pub min_num: u32,
+        /// Aggregation Algorithm
+        #[prost(enumeration = "AggregationAlgorithm", tag = "9")]
+        pub aggregation_algorithm: i32,
     }
     /// Represent a search response.
     #[derive(Clone, PartialEq, ::prost::Message)]
@@ -119,6 +122,16 @@ pub mod search {
             #[prost(message, tag = "2")]
             Status(super::super::super::super::google::rpc::Status),
         }
+    }
+    /// AggregationAlgorithm is enum of each aggregation algorithms
+    #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+    #[repr(i32)]
+    pub enum AggregationAlgorithm {
+        Unknown = 0,
+        ConcurrentQueue = 1,
+        SortSlice = 2,
+        SortPoolSlice = 3,
+        PairingHeap = 4,
     }
 }
 /// Filter related messages.
@@ -254,7 +267,8 @@ pub mod update {
         /// Update timestamp.
         #[prost(int64, tag = "3")]
         pub timestamp: i64,
-        /// A flag to disable balanced update (split remove -> insert operation) during update operation.
+        /// A flag to disable balanced update (split remove -> insert operation)
+        /// during update operation.
         #[prost(bool, tag = "4")]
         pub disable_balanced_update: bool,
     }
@@ -313,7 +327,8 @@ pub mod upsert {
         /// Upsert timestamp.
         #[prost(int64, tag = "3")]
         pub timestamp: i64,
-        /// A flag to disable balanced update (split remove -> insert operation) during update operation.
+        /// A flag to disable balanced update (split remove -> insert operation)
+        /// during update operation.
         #[prost(bool, tag = "4")]
         pub disable_balanced_update: bool,
     }
@@ -339,6 +354,38 @@ pub mod remove {
         /// Represent the multiple remove request content.
         #[prost(message, repeated, tag = "1")]
         pub requests: ::prost::alloc::vec::Vec<Request>,
+    }
+    /// Represent the remove request based on timestamp.
+    #[derive(Clone, PartialEq, ::prost::Message)]
+    pub struct TimestampRequest {
+        /// Represent the multiple remove request contents based on timestamp.
+        #[prost(message, repeated, tag = "1")]
+        pub timestamps: ::prost::alloc::vec::Vec<Timestamp>,
+    }
+    #[derive(Clone, PartialEq, ::prost::Message)]
+    pub struct Timestamp {
+        /// The timestamp.
+        #[prost(int64, tag = "1")]
+        pub timestamp: i64,
+        /// The conditional operator.
+        #[prost(enumeration = "timestamp::Operator", tag = "2")]
+        pub operator: i32,
+    }
+    /// Nested message and enum types in `Timestamp`.
+    pub mod timestamp {
+        /// Operator is enum of each conditional operator.
+        #[derive(
+            Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration,
+        )]
+        #[repr(i32)]
+        pub enum Operator {
+            Eq = 0,
+            Ne = 1,
+            Ge = 2,
+            Gt = 3,
+            Le = 4,
+            Lt = 5,
+        }
     }
     /// Represent the remove configuration.
     #[derive(Clone, PartialEq, ::prost::Message)]
@@ -415,6 +462,9 @@ pub mod object {
         /// The vector.
         #[prost(float, repeated, packed = "false", tag = "2")]
         pub vector: ::prost::alloc::vec::Vec<f32>,
+        /// timestamp represents when this vector inserted.
+        #[prost(int64, tag = "3")]
+        pub timestamp: i64,
     }
     /// Represent multiple vectors.
     #[derive(Clone, PartialEq, ::prost::Message)]
@@ -514,6 +564,31 @@ pub mod object {
     pub struct Locations {
         #[prost(message, repeated, tag = "1")]
         pub locations: ::prost::alloc::vec::Vec<Location>,
+    }
+    /// Represent the list object vector stream request and response.
+    #[derive(Clone, PartialEq, ::prost::Message)]
+    pub struct List {}
+    /// Nested message and enum types in `List`.
+    pub mod list {
+        #[derive(Clone, PartialEq, ::prost::Message)]
+        pub struct Request {}
+        #[derive(Clone, PartialEq, ::prost::Message)]
+        pub struct Response {
+            #[prost(oneof = "response::Payload", tags = "1, 2")]
+            pub payload: ::core::option::Option<response::Payload>,
+        }
+        /// Nested message and enum types in `Response`.
+        pub mod response {
+            #[derive(Clone, PartialEq, ::prost::Oneof)]
+            pub enum Payload {
+                /// The vector
+                #[prost(message, tag = "1")]
+                Vector(super::super::Vector),
+                /// The RPC error status.
+                #[prost(message, tag = "2")]
+                Status(super::super::super::super::super::google::rpc::Status),
+            }
+        }
     }
 }
 /// Control related messages.

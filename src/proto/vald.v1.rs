@@ -964,7 +964,8 @@ pub mod search_client {
                 .streaming(request.into_streaming_request(), path, codec)
                 .await
         }
-        #[doc = " A method to linear search indexed vectors by multiple vectors in a single request."]
+        #[doc = " A method to linear search indexed vectors by multiple vectors in a single"]
+        #[doc = " request."]
         pub async fn multi_linear_search(
             &mut self,
             request: impl tonic::IntoRequest<super::super::super::payload::v1::search::MultiRequest>,
@@ -982,7 +983,8 @@ pub mod search_client {
             let path = http::uri::PathAndQuery::from_static("/vald.v1.Search/MultiLinearSearch");
             self.inner.unary(request.into_request(), path, codec).await
         }
-        #[doc = " A method to linear search indexed vectors by multiple IDs in a single request."]
+        #[doc = " A method to linear search indexed vectors by multiple IDs in a single"]
+        #[doc = " request."]
         pub async fn multi_linear_search_by_id(
             &mut self,
             request: impl tonic::IntoRequest<super::super::super::payload::v1::search::MultiIdRequest>,
@@ -1118,7 +1120,8 @@ pub mod search_server {
                 tonic::Streaming<super::super::super::payload::v1::search::IdRequest>,
             >,
         ) -> Result<tonic::Response<Self::StreamLinearSearchByIDStream>, tonic::Status>;
-        #[doc = " A method to linear search indexed vectors by multiple vectors in a single request."]
+        #[doc = " A method to linear search indexed vectors by multiple vectors in a single"]
+        #[doc = " request."]
         async fn multi_linear_search(
             &self,
             request: tonic::Request<super::super::super::payload::v1::search::MultiRequest>,
@@ -1126,7 +1129,8 @@ pub mod search_server {
             tonic::Response<super::super::super::payload::v1::search::Responses>,
             tonic::Status,
         >;
-        #[doc = " A method to linear search indexed vectors by multiple IDs in a single request."]
+        #[doc = " A method to linear search indexed vectors by multiple IDs in a single"]
+        #[doc = " request."]
         async fn multi_linear_search_by_id(
             &self,
             request: tonic::Request<super::super::super::payload::v1::search::MultiIdRequest>,
@@ -2763,6 +2767,28 @@ pub mod object_client {
                 .streaming(request.into_streaming_request(), path, codec)
                 .await
         }
+        #[doc = " A method to get all the vectors with server streaming"]
+        pub async fn stream_list_object(
+            &mut self,
+            request: impl tonic::IntoRequest<super::super::super::payload::v1::object::list::Request>,
+        ) -> Result<
+            tonic::Response<
+                tonic::codec::Streaming<super::super::super::payload::v1::object::list::Response>,
+            >,
+            tonic::Status,
+        > {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static("/vald.v1.Object/StreamListObject");
+            self.inner
+                .server_streaming(request.into_request(), path, codec)
+                .await
+        }
     }
 }
 #[doc = r" Generated server implementations."]
@@ -2797,6 +2823,19 @@ pub mod object_server {
                 tonic::Streaming<super::super::super::payload::v1::object::VectorRequest>,
             >,
         ) -> Result<tonic::Response<Self::StreamGetObjectStream>, tonic::Status>;
+        #[doc = "Server streaming response type for the StreamListObject method."]
+        type StreamListObjectStream: futures_core::Stream<
+                Item = Result<
+                    super::super::super::payload::v1::object::list::Response,
+                    tonic::Status,
+                >,
+            > + Send
+            + 'static;
+        #[doc = " A method to get all the vectors with server streaming"]
+        async fn stream_list_object(
+            &self,
+            request: tonic::Request<super::super::super::payload::v1::object::list::Request>,
+        ) -> Result<tonic::Response<Self::StreamListObjectStream>, tonic::Status>;
     }
     #[doc = " Object service provides ways to fetch indexed vectors."]
     #[derive(Debug)]
@@ -2950,6 +2989,45 @@ pub mod object_server {
                     };
                     Box::pin(fut)
                 }
+                "/vald.v1.Object/StreamListObject" => {
+                    #[allow(non_camel_case_types)]
+                    struct StreamListObjectSvc<T: Object>(pub Arc<T>);
+                    impl<T: Object>
+                        tonic::server::ServerStreamingService<
+                            super::super::super::payload::v1::object::list::Request,
+                        > for StreamListObjectSvc<T>
+                    {
+                        type Response = super::super::super::payload::v1::object::list::Response;
+                        type ResponseStream = T::StreamListObjectStream;
+                        type Future =
+                            BoxFuture<tonic::Response<Self::ResponseStream>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<
+                                super::super::super::payload::v1::object::list::Request,
+                            >,
+                        ) -> Self::Future {
+                            let inner = self.0.clone();
+                            let fut = async move { (*inner).stream_list_object(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = StreamListObjectSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
+                            accept_compression_encodings,
+                            send_compression_encodings,
+                        );
+                        let res = grpc.server_streaming(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
                 _ => Box::pin(async move {
                     Ok(http::Response::builder()
                         .status(200)
@@ -3064,6 +3142,24 @@ pub mod remove_client {
             let path = http::uri::PathAndQuery::from_static("/vald.v1.Remove/Remove");
             self.inner.unary(request.into_request(), path, codec).await
         }
+        #[doc = " A method to remove an indexed vector based on timestamp."]
+        pub async fn remove_by_timestamp(
+            &mut self,
+            request: impl tonic::IntoRequest<super::super::super::payload::v1::remove::TimestampRequest>,
+        ) -> Result<
+            tonic::Response<super::super::super::payload::v1::object::Locations>,
+            tonic::Status,
+        > {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static("/vald.v1.Remove/RemoveByTimestamp");
+            self.inner.unary(request.into_request(), path, codec).await
+        }
         #[doc = " A method to remove multiple indexed vectors by bidirectional streaming."]
         pub async fn stream_remove(
             &mut self,
@@ -3121,6 +3217,14 @@ pub mod remove_server {
             request: tonic::Request<super::super::super::payload::v1::remove::Request>,
         ) -> Result<
             tonic::Response<super::super::super::payload::v1::object::Location>,
+            tonic::Status,
+        >;
+        #[doc = " A method to remove an indexed vector based on timestamp."]
+        async fn remove_by_timestamp(
+            &self,
+            request: tonic::Request<super::super::super::payload::v1::remove::TimestampRequest>,
+        ) -> Result<
+            tonic::Response<super::super::super::payload::v1::object::Locations>,
             tonic::Status,
         >;
         #[doc = "Server streaming response type for the StreamRemove method."]
@@ -3214,6 +3318,43 @@ pub mod remove_server {
                     let fut = async move {
                         let inner = inner.0;
                         let method = RemoveSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
+                            accept_compression_encodings,
+                            send_compression_encodings,
+                        );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/vald.v1.Remove/RemoveByTimestamp" => {
+                    #[allow(non_camel_case_types)]
+                    struct RemoveByTimestampSvc<T: Remove>(pub Arc<T>);
+                    impl<T: Remove>
+                        tonic::server::UnaryService<
+                            super::super::super::payload::v1::remove::TimestampRequest,
+                        > for RemoveByTimestampSvc<T>
+                    {
+                        type Response = super::super::super::payload::v1::object::Locations;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<
+                                super::super::super::payload::v1::remove::TimestampRequest,
+                            >,
+                        ) -> Self::Future {
+                            let inner = self.0.clone();
+                            let fut = async move { (*inner).remove_by_timestamp(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = RemoveByTimestampSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
                             accept_compression_encodings,
