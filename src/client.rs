@@ -58,6 +58,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 vector: Some(object::Vector {
                     id: id.to_string(),
                     vector: v.to_vec(),
+                    timestamp: Utc::now().timestamp(),
                 }),
                 config: Some(insert::Config {
                     skip_strict_exist_check: true,
@@ -90,6 +91,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     timeout: 500,
                     ingress_filters: None,
                     egress_filters: None,
+		    aggregation_algorithm: 0,
                 }),
             })
             .await?;
@@ -116,6 +118,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     timeout: 500,
                     ingress_filters: None,
                     egress_filters: None,
+		    aggregation_algorithm: 0,
                 }),
             })
             .await?;
